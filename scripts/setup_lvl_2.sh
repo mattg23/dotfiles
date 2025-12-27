@@ -46,10 +46,39 @@ install_apt "fonts-noto-color-emoji"
 echo "Rebuilding font cache..."
 fc-cache -f -v > /dev/null
 
-# lets see if they fixed restore and we can skip the kwin script...
 echo -e "${BLUE}--> Configuring KDE Session Restore...${NC}"
 kwriteconfig6 --file ksmserverrc --group General --key loginMode "restorePreviousLogout"
 
+# ZSH magic
+
+echo -e "${GREEN}--> setting up Oh-My-Zsh...${NC}"
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    echo "Installing Oh-My-Zsh..."
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    sudo usermod --shell "$(which zsh)" "$USER"
+else
+    echo "Oh-My-Zsh is already installed."
+fi
+
+# C. Install Powerlevel10k Theme
+P10K_DIR="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+if [ ! -d "$P10K_DIR" ]; then
+    echo "Cloning Powerlevel10k..."
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$P10K_DIR"
+fi
+
+# D. Install Essential Plugins (Autosuggestions & Syntax Highlighting)
+ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+
+if [ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
+    echo "Installing zsh-autosuggestions..."
+    git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+fi
+
+if [ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
+    echo "Installing zsh-syntax-highlighting..."
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+fi
 
 # Input Method (Fcitx5)
 echo -e "${BLUE}--> Configuring Input Method (Fcitx5)...${NC}"

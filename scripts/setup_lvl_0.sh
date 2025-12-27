@@ -35,13 +35,5 @@ else
     echo "brave already installed"
 fi
 
-echo -e "${GREEN}--> Checking for Oh-My-Zsh...${NC}"
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
-    echo "Installing Oh-My-Zsh..."
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-    sudo usermod --shell "$(which zsh)" "$USER"
-else
-    echo "Oh-My-Zsh is already installed."
-fi
 
 echo -e "${GREEN}=== Level 0 Complete! ===${NC}"
