@@ -10,7 +10,7 @@ NC='\033[0m'
 
 echo -e "${GREEN}=== Level 2: Customization & make it home ===${NC}"
 
-echo -e "${BLUE}--> Installing Nerd Fonts...${NC}"
+echo -e "${BLUE}--> Installing Fonts...${NC}"
 FONT_DIR="$HOME/.local/share/fonts"
 mkdir -p "$FONT_DIR"
 
@@ -20,12 +20,31 @@ if [ ! -f "$FONT_DIR/MesloLGS NF Regular.ttf" ]; then
     wget -P "$FONT_DIR" https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf
     wget -P "$FONT_DIR" https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf
     wget -P "$FONT_DIR" https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf
-
-    echo "Rebuilding font cache..."
-    fc-cache -f -v > /dev/null
 else
     echo "Nerd Fonts already installed."
 fi
+
+if [ ! -f "$FONT_DIR/FiraCodeNerdFont-Regular.ttf" ]; then
+    echo "Downloading Fira Code Nerd Font..."
+    # Grab the latest release zip
+    wget -O /tmp/FiraCode.zip https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip
+    unzip -o /tmp/FiraCode.zip -d "$FONT_DIR"
+    rm /tmp/FiraCode.zip
+fi
+
+if [ ! -f "$FONT_DIR/Iosevka-Regular.ttf" ]; then
+    echo "Downloading Iosevka..."
+    # Using a specific stable version (29.0.4) to prevent link rot
+    wget -O /tmp/Iosevka.zip https://github.com/be5invis/Iosevka/releases/download/v33.3.6/PkgTTC-Iosevka-33.3.6.zip
+    unzip -o /tmp/Iosevka.zip -d "$FONT_DIR"
+    rm /tmp/Iosevka.zip
+fi
+
+
+install_apt "fonts-noto-color-emoji"
+
+echo "Rebuilding font cache..."
+fc-cache -f -v > /dev/null
 
 # lets see if they fixed restore and we can skip the kwin script...
 echo -e "${BLUE}--> Configuring KDE Session Restore...${NC}"
