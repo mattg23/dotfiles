@@ -1,3 +1,5 @@
 [user]
 	name = mattgr23
 	email = matthias.grunewald@gritplex.com
+[init]
+	defaultBranch = main
