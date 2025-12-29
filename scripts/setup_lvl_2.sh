@@ -137,4 +137,7 @@ mkdir -p "$HOME/work" \
          "$HOME/scans" \
          "$HOME/company"
 
+# Disable the 30s Shutdown/Logout Confirmation
+kwriteconfig6 --file ksmserverrc --group General --key confirmLogout false
+
 echo -e "${GREEN}=== Level 2 Complete! ===${NC}"

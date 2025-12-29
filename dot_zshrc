@@ -15,3 +15,62 @@ source $ZSH/oh-my-zsh.sh
 
 export PATH="$PATH:/home/matt/.dotnet/tools"
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+
+# --- Scaleway Quick Share v3 (Help + Wayland) ---
+share() {
+    # 1. Help Menu
+    if [[ "$1" == "--help" || "$1" == "-h" ]]; then
+        echo "Usage: share <filename> [duration] [mode]"
+        echo ""
+        echo "Arguments:"
+        echo "  filename   Path to the file you want to share."
+        echo "  duration   (Optional) How long the link is valid. Default: 24h."
+        echo "             Examples: 10m, 1h, 7d"
+        echo "  mode       (Optional) 'raw' to skip link shortening."
+        echo ""
+        echo "Examples:"
+        echo "  share quote.pdf           # 24h validity, shortened link (is.gd)"
+        echo "  share image.png 1h        # 1 hour validity, shortened link"
+        echo "  share secret.txt 10m raw  # 10 min validity, long S3 link (no shortener)"
+        return 0
+    fi
+
+    # 2. Config & Setup
+    local file="$1"
+    local time="${2:-24h}"    # Default expire: 24 hours
+    local mode="${3:-short}"  # Default mode: shorten the link
+    
+    # Define the "Virtual" Remote
+    local bucket="share:gpx-share"
+    source "$HOME/.config/restic/env.sh"
+
+    if [[ -z "$file" ]]; then
+        echo "❌ Error: No file specified."
+        echo "Type 'share --help' for usage."
+        return 1
+    fi
+
+    if [[ ! -f "$file" ]]; then
+        echo "❌ Error: File not found: $file"
+        return 1
+    fi
+
+    echo "📤 Uploading $(basename "$file") to Scaleway..."
+    rclone copyto "$file" "$bucket/$(basename "$file")" --log-level ERROR
+
+    echo "🔗 Generating Link (Valid for $time)..."
+    local long_url=$(rclone link "$bucket/$(basename "$file")" --expire "$time" --log-level ERROR)
+    
+    # 5. Output Handling
+    if [[ "$mode" == "raw" ]]; then
+        echo -n "$long_url" | wl-copy
+        echo "✅ Long Link copied to clipboard!"
+        echo "   $long_url"
+    else
+        local short_url=$(curl -G -s "https://is.gd/create.php" --data-urlencode "format=simple" --data-urlencode "url=$long_url")
+        echo -n "$short_url" | wl-copy
+        echo "✅ Short Link copied to clipboard!"
+        echo "   $short_url"
+    fi
+}
