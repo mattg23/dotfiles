@@ -140,4 +140,12 @@ mkdir -p "$HOME/work" \
 # Disable the 30s Shutdown/Logout Confirmation
 kwriteconfig6 --file ksmserverrc --group General --key confirmLogout false
 
+echo -e "${GREEN}--> Misc packages...${NC}"
+install_apt cmatrix
+install_apt tealdeer
+install_apt cowsay
+install_apt du-dust
+install_apt procs
+install_apt duf
+
 echo -e "${GREEN}=== Level 2 Complete! ===${NC}"

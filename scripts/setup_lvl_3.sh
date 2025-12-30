@@ -61,5 +61,5 @@ EOF
 echo -e "${GREEN}=== Setup Complete ===${NC}"
 echo -e "${YELLOW}ACTION REQUIRED:${NC}"
 echo -e "1. Edit credentials:  ${BLUE}~/.config/restic/env.sh${NC} -- HINT: SecNote: 'RESTIC ENV'"
-echo -e "2. Initialize Repo:   ${BLUE}source ~/.config/restic/env.sh && restic init${NC}"
+echo -e "2. Initialize Repo:   ${BLUE}source ~/.config/restic/env.sh && restic stats${NC}"
 echo -e "3. Enable Timer:      ${BLUE}systemctl --user enable --now restic-backup.timer${NC}"
