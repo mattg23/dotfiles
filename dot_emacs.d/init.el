@@ -131,6 +131,11 @@
   (define-key evil-motion-state-map (kbd "C-k") 'evil-window-up)
   (define-key evil-motion-state-map (kbd "C-l") 'evil-window-right))
 
+(with-eval-after-load 'evil
+  ;; In Insert Mode, make TAB insert spaces (like a normal editor)
+  ;; instead of trying to auto-align the line syntax.
+  (define-key evil-insert-state-map (kbd "TAB") 'tab-to-tab-stop))
+
 
 ;; =========================================================
 ;; themes/ui 🖌
