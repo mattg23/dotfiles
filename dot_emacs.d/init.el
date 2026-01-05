@@ -210,7 +210,8 @@
                   ("FIXME"  . "#FF0000")
                   ("DEBUG"  . "#A020F0")
                   ("GOTCHA" . "#FF4500")
-                  ("STUB"   . "#1E90FF"))))
+                  ("STUB"   . "#1E90FF")
+		  ("NOTE"   . "#127821"))))
 
 ;; =========================================================
 ;; navigation / search
@@ -370,23 +371,50 @@
   :hook
   ;; Hook Eglot into the programming modes we care about
   ((rust-ts-mode
-    csharp-ts-mode
     typescript-ts-mode) . eglot-ensure)
 
   :config
   ;; Optimization: Don't log every single JSON event (improves speed)
   (setq eglot-events-buffer-size 0)
-
   (add-to-list 'eglot-server-programs
-               '(csharp-ts-mode . ("csharp-ls")))
+               '(csharp-ts-mode . ("csharp-ls")))  
+
+  (setq eglot-report-progress nil
+	eglot-events-buffer-size 0)
   ;; Keybindings (Eglot reuses standard Emacs keys, but we can add shortcuts)
   (with-eval-after-load 'evil
+    (define-key evil-normal-state-map (kbd "g /") #'consult-ripgrep)
     (define-key evil-normal-state-map (kbd "g r") #'xref-find-references)
     (define-key evil-normal-state-map (kbd "g d") #'xref-find-definitions)
     (define-key evil-normal-state-map (kbd "g b") #'xref-go-back)
     (define-key evil-normal-state-map (kbd "g a") #'eglot-code-actions)
     (define-key evil-normal-state-map (kbd "g R") #'eglot-rename)
     (define-key evil-normal-state-map (kbd "K")   #'eldoc))) ; Hover doc
+
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :custom
+  ;; General LSP behavior (safe)
+  (lsp-enable-symbol-highlighting t)
+  (lsp-enable-on-type-formatting nil)
+  (lsp-signature-auto-activate t)
+
+  (lsp-completion-provider :none)
+
+  ;; Avoid over-eager workspace restarts
+  (lsp-restart 'ignore)
+
+  ;; Reduce noise
+  (lsp-log-io nil)
+  :config
+  (with-eval-after-load 'evil
+    (define-key evil-normal-state-map (kbd "g /") #'consult-ripgrep)
+    (define-key evil-normal-state-map (kbd "g r") #'xref-find-references)
+    (define-key evil-normal-state-map (kbd "g d") #'xref-find-definitions)
+    (define-key evil-normal-state-map (kbd "g b") #'xref-go-back)
+    (define-key evil-normal-state-map (kbd "g a") #'lsp-execute-code-action)
+    (define-key evil-normal-state-map (kbd "g R") #'lsp-rename)
+    (define-key evil-normal-state-map (kbd "K")   #'eldoc)))
 
 ;; --- 4. Language Specifics ---
 
@@ -398,10 +426,10 @@
   ;; Auto-format on save using Eglot (rustfmt)
   (add-hook 'before-save-hook (lambda () (when (derived-mode-p 'rust-ts-mode) (eglot-format-buffer)))))
 
-;; C# / .NET
+;; C# major mode
 (use-package csharp-mode
-  :ensure nil
   :mode "\\.cs\\'")
+(add-hook 'csharp-ts-mode-hook #'lsp-deferred)
 
 ;; WEB / TYPESCRIPT
 (use-package typescript-ts-mode
