@@ -29,11 +29,6 @@ echo -e "${GREEN}--> Installing Thunderbird...${NC}"
 install_snap thunderbird
 
 echo -e "${GREEN}--> brave...${NC}"
-if ! is_installed "brave-browser"; then
-    curl -fsS https://dl.brave.com/install.sh | sh
-else
-    echo "brave already installed"
-fi
-
+install_flathub "io.github.ungoogled_software.ungoogled_chromium"
 
 echo -e "${GREEN}=== Level 0 Complete! ===${NC}"

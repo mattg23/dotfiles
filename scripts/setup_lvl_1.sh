@@ -22,9 +22,21 @@ else
 fi
 
 echo -e "${BLUE}--> Installing Dotnet SDK...${NC}"
-install_apt "dotnet-sdk-8.0"
-install_apt "dotnet-sdk-9.0"
-install_apt "dotnet-sdk-10.0"
+if ! command -v dotnet &> /dev/null; then
+    # Define paths
+    DOTNET_INSTALL_DIR="$HOME/.dotnet"
+    INSTALL_SCRIPT="$HOME/Downloads/dotnet-install.sh"
+
+    # 1. Download the official installer script
+    wget -q https://dot.net/v1/dotnet-install.sh -O "$INSTALL_SCRIPT"
+    chmod +x "$INSTALL_SCRIPT"
+
+    "$INSTALL_SCRIPT" --install-dir "$DOTNET_INSTALL_DIR" --channel STS
+
+    echo -e "$Dotnet SDK installed to $DOTNET_INSTALL_DIR"
+else
+    echo -e "Dotnet is already installed."
+fi
 
 echo -e "${BLUE}--> Installing Docker...${NC}"
 if ! command -v docker &> /dev/null; then

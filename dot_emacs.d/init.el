@@ -44,6 +44,7 @@
 ;; steal PATH from shell
 (use-package exec-path-from-shell
   :config
+  (add-to-list 'exec-path-from-shell-variables "DOTNET_ROOT") ;; microsoft is special again *facepalm*
   ;; Only run this if we are in a GUI (X11, Wayland, Mac)
   (when (memq window-system '(mac ns x pgtk))
     (exec-path-from-shell-initialize)))
@@ -100,6 +101,7 @@
   (setq evil-want-C-u-scroll t)
   :config
   (setq evil-undo-system 'undo-redo) ; Emacs 28+ native undo
+  (setq evil-kill-on-visual-paste nil)
   (evil-mode 1))
 
 (use-package evil-collection
@@ -331,30 +333,35 @@
 ;; --- treesitter setup ---
 
 (setq treesit-language-source-alist
-      '((bash "https://github.com/tree-sitter/tree-sitter-bash")
-        (cmake "https://github.com/uyha/tree-sitter-cmake")
-        (css "https://github.com/tree-sitter/tree-sitter-css")
-        (elisp "https://github.com/Wilfred/tree-sitter-elisp")
-        (go "https://github.com/tree-sitter/tree-sitter-go")
-        (html "https://github.com/tree-sitter/tree-sitter-html")
-        (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
-        (json "https://github.com/tree-sitter/tree-sitter-json")
-        (make "https://github.com/alemuller/tree-sitter-make")
-        (markdown "https://github.com/ikatyang/tree-sitter-markdown")
-        (python "https://github.com/tree-sitter/tree-sitter-python")
-        (toml "https://github.com/tree-sitter/tree-sitter-toml")
-        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
-        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
-        (yaml "https://github.com/ikatyang/tree-sitter-yaml")
-        (rust "https://github.com/tree-sitter/tree-sitter-rust" "v0.23.3")
-        (c-sharp "https://github.com/tree-sitter/tree-sitter-c-sharp")))
+      '((bash "https://github.com/tree-sitter/tree-sitter-bash" "v0.21.0")
+        (cmake "https://github.com/uyha/tree-sitter-cmake" "v0.5.0")
+        (css "https://github.com/tree-sitter/tree-sitter-css" "v0.21.1")
+        (go "https://github.com/tree-sitter/tree-sitter-go" "v0.21.0")
+        (html "https://github.com/tree-sitter/tree-sitter-html" "v0.20.3")
+        (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.21.4" "src")
+        (json "https://github.com/tree-sitter/tree-sitter-json" "v0.21.0")
+        (markdown "https://github.com/ikatyang/tree-sitter-markdown" "v0.7.1")
+        (python "https://github.com/tree-sitter/tree-sitter-python" "v0.21.0")
+        (toml "https://github.com/tree-sitter/tree-sitter-toml" "v0.5.1")
+        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.21.2" "tsx/src")
+        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.21.2" "typescript/src")
+        (yaml "https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0")
+        (rust "https://github.com/tree-sitter/tree-sitter-rust" "v0.21.2")
+        (c-sharp "https://github.com/tree-sitter/tree-sitter-c-sharp" "v0.21.3")))
 
 ;; Remap legacy modes to their modern Treesitter equivalents (Emacs 29+)
 (setq major-mode-remap-alist
-      '((rust-mode . rust-ts-mode)
-        (csharp-mode . csharp-ts-mode)
-        (js-json-mode . json-ts-mode)
-        (typescript-mode . typescript-ts-mode)))
+      '((bash-mode . bash-ts-mode)
+        (css-mode . css-ts-mode)
+        (go-mode . go-ts-mode)
+        (javascript-mode . js-ts-mode)
+        (js-mode . js-ts-mode)
+        (json-mode . json-ts-mode)
+        (python-mode . python-ts-mode)
+        (csharp-mode . csharp-ts-mode) 
+        (rust-mode . rust-ts-mode)
+        (yaml-mode . yaml-ts-mode)
+        (toml-mode . toml-ts-mode)))
 
 ;; --- Eglot (LSP Client) ---
 ;; Built-in, zero-config LSP.
@@ -370,6 +377,8 @@
   ;; Optimization: Don't log every single JSON event (improves speed)
   (setq eglot-events-buffer-size 0)
 
+  (add-to-list 'eglot-server-programs
+               '(csharp-ts-mode . ("csharp-ls")))
   ;; Keybindings (Eglot reuses standard Emacs keys, but we can add shortcuts)
   (with-eval-after-load 'evil
     (define-key evil-normal-state-map (kbd "g r") #'xref-find-references)
