@@ -1,5 +1,5 @@
 ;; --- perf ---
-(setq gc-cons-threshold (* 50 1000 1000)) ;; 50mb
+(setq gc-cons-threshold (* 100 1000 1000)) ;; 100mb
 
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
 
@@ -12,6 +12,7 @@
 ;; Load it if it exists, but don't error if it doesn't
 (when (file-exists-p custom-file)
   (load custom-file))
+
 ;; --- package archives ---
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
@@ -79,6 +80,10 @@
 
 ;; repeat repeat repeat
 (repeat-mode 1)
+
+;; the eternal war
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
 
 ;; --- Recent Files ---
 (use-package recentf
@@ -211,7 +216,7 @@
                   ("DEBUG"  . "#A020F0")
                   ("GOTCHA" . "#FF4500")
                   ("STUB"   . "#1E90FF")
-		  ("NOTE"   . "#127821"))))
+                  ("NOTE"   . "#127821"))))
 
 ;; =========================================================
 ;; navigation / search
@@ -315,13 +320,18 @@
   (global-corfu-mode)
   :custom
   (corfu-cycle t)                ; Enable cycling for `corfu-next/previous'
-  (corfu-auto t)                 ; Enable auto completion
+  (corfu-auto nil)                 ; Enable auto completion
   (corfu-auto-delay 0.2)         ; Short delay before showing
   (corfu-auto-prefix 2)          ; Show after 2 chars
   (corfu-quit-no-match 'separator)
   :bind
   (:map corfu-map
         ("SPC" . corfu-insert-separator))) ; Use Space to filter (e.g. "file txt")
+
+(global-set-key (kbd "C-@") #'set-mark-command)
+(define-key evil-insert-state-map (kbd "C-.") #'completion-at-point)
+(define-key evil-normal-state-map (kbd "C-.") #'completion-at-point)
+
 
 ;; Add icons to the completion popup 
 (use-package kind-icon
@@ -387,9 +397,10 @@
     (define-key evil-normal-state-map (kbd "g r") #'xref-find-references)
     (define-key evil-normal-state-map (kbd "g d") #'xref-find-definitions)
     (define-key evil-normal-state-map (kbd "g b") #'xref-go-back)
-    (define-key evil-normal-state-map (kbd "g a") #'eglot-code-actions)
+    (define-key evil-normal-state-map (kbd "C-.") #'eglot-code-actions)
     (define-key evil-normal-state-map (kbd "g R") #'eglot-rename)
     (define-key evil-normal-state-map (kbd "K")   #'eldoc))) ; Hover doc
+     
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
@@ -398,6 +409,8 @@
   (lsp-enable-symbol-highlighting t)
   (lsp-enable-on-type-formatting nil)
   (lsp-signature-auto-activate t)
+  (setq lsp-idle-delay 0.400)
+
 
   (lsp-completion-provider :none)
 
@@ -412,9 +425,9 @@
     (define-key evil-normal-state-map (kbd "g r") #'xref-find-references)
     (define-key evil-normal-state-map (kbd "g d") #'xref-find-definitions)
     (define-key evil-normal-state-map (kbd "g b") #'xref-go-back)
-    (define-key evil-normal-state-map (kbd "g a") #'lsp-execute-code-action)
+    (define-key evil-normal-state-map (kbd "C-.") #'lsp-execute-code-action)
     (define-key evil-normal-state-map (kbd "g R") #'lsp-rename)
-    (define-key evil-normal-state-map (kbd "K")   #'eldoc)))
+    (define-key evil-normal-state-map (kbd "K")   #'eldoc))) 
 
 ;; --- 4. Language Specifics ---
 
@@ -471,12 +484,18 @@
   (setq-default pdf-view-display-size 'fit-width))
 
 ;; --- Multiple Cursors ---
-;; Edit multiple lines at once. (Restoring your old bindings)
 (use-package multiple-cursors
-  :bind (("C-M-n" . mc/mark-next-like-this)      ; Next occurrence
-         ("C-M-p" . mc/mark-previous-like-this)  ; Previous occurrence
-         ("C-c C-e" . mc/edit-lines)             ; Edit lines
-         ("C-c C-r" . mc/mark-all-in-region)))   ; Mark all in selection
+  :ensure t
+  :after evil
+  :bind
+  (("C->" . mc/mark-next-like-this)
+   ("C-<" . mc/mark-previous-like-this)
+   ("C-c C->" . mc/mark-all-like-this))
+  :config
+  (setq mc/always-run-for-all t)
+  (define-key mc/keymap (kbd "<escape>") #'mc/keyboard-quit)
+  (define-key evil-normal-state-map (kbd "g m") #'mc/mark-all-like-this)
+  (define-key evil-visual-state-map (kbd "g m") #'mc/mark-all-like-this))
 
 ;; ---  Text Manipulation Helpers ---
 ;; Move lines up/down 
