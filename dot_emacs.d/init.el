@@ -397,7 +397,7 @@
     (define-key evil-normal-state-map (kbd "g r") #'xref-find-references)
     (define-key evil-normal-state-map (kbd "g d") #'xref-find-definitions)
     (define-key evil-normal-state-map (kbd "g b") #'xref-go-back)
-    (define-key evil-normal-state-map (kbd "C-.") #'eglot-code-actions)
+    (define-key evil-normal-state-map (kbd "g a") #'eglot-code-actions)
     (define-key evil-normal-state-map (kbd "g R") #'eglot-rename)
     (define-key evil-normal-state-map (kbd "K")   #'eldoc))) ; Hover doc
      
@@ -425,7 +425,7 @@
     (define-key evil-normal-state-map (kbd "g r") #'xref-find-references)
     (define-key evil-normal-state-map (kbd "g d") #'xref-find-definitions)
     (define-key evil-normal-state-map (kbd "g b") #'xref-go-back)
-    (define-key evil-normal-state-map (kbd "C-.") #'lsp-execute-code-action)
+    (define-key evil-normal-state-map (kbd "g a") #'lsp-execute-code-action)
     (define-key evil-normal-state-map (kbd "g R") #'lsp-rename)
     (define-key evil-normal-state-map (kbd "K")   #'eldoc))) 
 
@@ -519,6 +519,18 @@
 
 (global-set-key (kbd "M-<up>") 'move-line-up)
 (global-set-key (kbd "M-<down>") 'move-line-down)
+
+;; Yank current directory
+(defun my/copy-buffer-directory ()
+  "Copy the directory of the current buffer's file to the clipboard."
+  (interactive)
+  (if-let ((file (buffer-file-name)))
+      (let ((dir (file-name-directory file)))
+        (kill-new dir)
+        (message "Copied directory: %s" dir))
+    (user-error "Current buffer is not visiting a file")))
+
+(define-key evil-normal-state-map (kbd "g y d") #'my/copy-buffer-directory)
 
 ;; --- Auto-Commit Notes ---
 ;; Automatically git commit/push when saving files in ~/notes/
