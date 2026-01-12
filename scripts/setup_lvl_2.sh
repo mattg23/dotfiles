@@ -147,5 +147,6 @@ install_apt cowsay
 install_apt du-dust
 install_apt procs
 install_apt duf
+install_flathub "io.github.Qalculate.qalculate-qt"
 
 echo -e "${GREEN}=== Level 2 Complete! ===${NC}"
