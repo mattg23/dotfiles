@@ -451,6 +451,20 @@
   :config
   (setq typescript-ts-mode-indent-offset 2))
 
+(use-package tsx-ts-mode
+  :ensure nil
+  :mode "\\.tsx\\'"
+  :config
+  (setq tsx-ts-mode-indent-offset 2))
+
+;; C/C++ Clang format
+(use-package clang-format)
+(defun my/clang-format-on-save ()
+  "Auto-format C/C++ buffers with clang-format on save."
+  (add-hook 'before-save-hook #'clang-format-buffer nil t))
+
+(add-hook 'c-mode-common-hook #'my/clang-format-on-save)
+
 ;; DOCKER
 (use-package dockerfile-mode)
 
@@ -557,6 +571,8 @@
 	      (verb-mode 1)
 	      (message "Verb mode enabled (Filename Match)"))))
 
+;; timers in emacs
+(use-package tmr)
 
 ;; ==================================
 ;; Startup

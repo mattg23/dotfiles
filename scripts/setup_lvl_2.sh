@@ -149,5 +149,6 @@ install_apt procs
 install_apt duf
 install_flathub "io.github.Qalculate.qalculate-qt"
 install_apt pdfarranger
+install_flathub "org.onlyoffice.desktopeditors"
 
 echo -e "${GREEN}=== Level 2 Complete! ===${NC}"
