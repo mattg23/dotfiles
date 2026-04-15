@@ -117,14 +117,7 @@
 ;; --- line numbers ---
 
 (global-display-line-numbers-mode t)
-(setq display-line-numbers-type 'relative)
-
-;; Switch to absolute in Insert mode, back to relative in Normal mode
-(add-hook 'evil-insert-state-entry-hook
-          (lambda () (setq display-line-numbers t)))
-
-(add-hook 'evil-insert-state-exit-hook
-          (lambda () (setq display-line-numbers 'relative)))
+(setq display-line-numbers-type 'absolute)
 
 ;; --- keybindings ---
 
@@ -453,7 +446,8 @@
 
 (use-package tsx-ts-mode
   :ensure nil
-  :mode "\\.tsx\\'"
+  :mode (("\\.tsx\\'" . tsx-ts-mode)
+         ("\\.jsx\\'" . tsx-ts-mode))
   :config
   (setq tsx-ts-mode-indent-offset 2))
 
