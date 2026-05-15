@@ -326,6 +326,9 @@
 (define-key evil-normal-state-map (kbd "C-.") #'completion-at-point)
 
 
+;; code folding
+(add-hook 'prog-mode-hook #'hs-minor-mode)
+
 ;; Add icons to the completion popup 
 (use-package kind-icon
   :after corfu

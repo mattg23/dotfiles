@@ -135,7 +135,8 @@ mkdir -p "$HOME/work" \
          "$HOME/dump" \
          "$HOME/private" \
          "$HOME/scans" \
-         "$HOME/company"
+         "$HOME/company" \
+         "$HOME/.chromes"
 
 # Disable the 30s Shutdown/Logout Confirmation
 kwriteconfig6 --file ksmserverrc --group General --key confirmLogout false
