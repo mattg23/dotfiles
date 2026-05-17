@@ -33,7 +33,7 @@ if ! command -v dotnet &> /dev/null; then
 
     "$INSTALL_SCRIPT" --install-dir "$DOTNET_INSTALL_DIR" --channel STS
 
-    echo -e "$Dotnet SDK installed to $DOTNET_INSTALL_DIR"
+    echo -e "Dotnet SDK installed to $DOTNET_INSTALL_DIR"
 else
     echo -e "Dotnet is already installed."
 fi

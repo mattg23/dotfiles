@@ -13,7 +13,7 @@ echo -e "${GREEN}--> Updating APT repositories...${NC}"
 sudo apt update
 
 echo -e "${GREEN}--> installing Zsh and core CLI tools...${NC}"
-sudo apt install -y zsh git curl wget build-essential unzip htop fastfetch tree fzf ripgrep fd-find
+sudo apt install -y zsh git curl wget build-essential unzip htop fastfetch tree fzf ripgrep fd-find flatpak
 
 echo -e "${GREEN}--> installing EurKEY...${NC}"
 if ! is_installed "eurkey"; then
